@@ -1396,11 +1396,4 @@ else:
             else:
                 st.info("Please upload geographic reference data to use pivot tables.")
 
-        # Footer
-        st.markdown("---")
-        st.markdown("""
-        <div style='display: flex; justify-content: space-between; align-items: center; padding: 10px 0;'>
-        <div style='color: #6B7280; font-size: 0.9rem;'>Sales Analytics Dashboard | Created with Streamlit</div>
-        <div style='color: #6B7280; font-size: 0.9rem;'>Last updated: {}</div>
-        </div>
-        """.format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M")), unsafe_allow_html=True)
+
