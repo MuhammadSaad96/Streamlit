@@ -131,75 +131,153 @@ if 'selected_month' not in st.session_state:
 
 # Function to clean state names
 def clean_state_names(df):
+    """
+    Comprehensive state name cleaning function
+    Handles US states, territories, international locations, and various abbreviations
+    """
+    # Comprehensive state and location mapping
     state_mapping = {
-        'NY': 'New York',
-        'NewYork': 'New York',
-        'New York, NY': 'New York',
-        'CA': 'California',
-        'FL': 'Florida',
-        'TX': 'Texas',
-        'PA': 'Pennsylvania',
-        'IL': 'Illinois',
-        'OH': 'Ohio',
-        'GA': 'Georgia',
-        'NC': 'North Carolina',
-        'MI': 'Michigan',
-        'NJ': 'New Jersey',
-        'VA': 'Virginia',
-        'WA': 'Washington',
-        'AZ': 'Arizona',
-        'MA': 'Massachusetts',
-        'TN': 'Tennessee',
-        'IN': 'Indiana',
-        'MO': 'Missouri',
-        'MD': 'Maryland',
-        'WI': 'Wisconsin',
-        'MN': 'Minnesota',
-        'CO': 'Colorado',
-        'AL': 'Alabama',
-        'SC': 'South Carolina',
-        'LA': 'Louisiana',
-        'KY': 'Kentucky',
-        'OR': 'Oregon',
-        'OK': 'Oklahoma',
-        'CT': 'Connecticut',
-        'IA': 'Iowa',
-        'MS': 'Mississippi',
-        'AR': 'Arkansas',
-        'KS': 'Kansas',
-        'UT': 'Utah',
-        'NV': 'Nevada',
-        'NM': 'New Mexico',
-        'WV': 'West Virginia',
-        'NE': 'Nebraska',
-        'ID': 'Idaho',
-        'HI': 'Hawaii',
-        'ME': 'Maine',
-        'NH': 'New Hampshire',
-        'RI': 'Rhode Island',
-        'MT': 'Montana',
-        'DE': 'Delaware',
-        'SD': 'South Dakota',
-        'AK': 'Alaska',
-        'ND': 'North Dakota',
-        'VT': 'Vermont',
-        'WY': 'Wyoming',
-        'DC': 'District of Columbia'
+        # US States (Full names, abbreviations, and variations)
+        'AK': 'Alaska', 'AL': 'Alabama', 'AR': 'Arkansas', 'AZ': 'Arizona', 
+        'CA': 'California', 'CO': 'Colorado', 'CT': 'Connecticut', 
+        'DE': 'Delaware', 'FL': 'Florida', 'GA': 'Georgia', 
+        'HI': 'Hawaii', 'IA': 'Iowa', 'ID': 'Idaho', 'IL': 'Illinois', 
+        'IN': 'Indiana', 'KS': 'Kansas', 'KY': 'Kentucky', 
+        'LA': 'Louisiana', 'MA': 'Massachusetts', 'MD': 'Maryland', 
+        'ME': 'Maine', 'MI': 'Michigan', 'MN': 'Minnesota', 
+        'MO': 'Missouri', 'MS': 'Mississippi', 'MT': 'Montana', 
+        'NC': 'North Carolina', 'ND': 'North Dakota', 'NE': 'Nebraska', 
+        'NH': 'New Hampshire', 'NJ': 'New Jersey', 'NM': 'New Mexico', 
+        'NV': 'Nevada', 'NY': 'New York', 'OH': 'Ohio', 'OK': 'Oklahoma', 
+        'OR': 'Oregon', 'PA': 'Pennsylvania', 'RI': 'Rhode Island', 
+        'SC': 'South Carolina', 'SD': 'South Dakota', 'TN': 'Tennessee', 
+        'TX': 'Texas', 'UT': 'Utah', 'VA': 'Virginia', 'VT': 'Vermont', 
+        'WA': 'Washington', 'WI': 'Wisconsin', 'WV': 'West Virginia', 
+        'WY': 'Wyoming', 'DC': 'District of Columbia',
+
+        # Variations of existing names
+        'Ala': 'Alabama', 'Alab': 'Alabama', 'Aa': 'Alabama',
+        'Ak': 'Alaska', 'Alas': 'Alaska', 'Ae': 'Alaska',
+        'Ariz': 'Arizona', 'Az': 'Arizona', 'Ap': 'Arizona',
+        'Ark': 'Arkansas', 'Ar': 'Arkansas',
+        'Cal': 'California', 'Calif': 'California', 'Ca.': 'California',
+        'Colo': 'Colorado', 'Co': 'Colorado',
+        'Conn': 'Connecticut', 'Ct': 'Connecticut', 'Ct.': 'Connecticut',
+        'Del': 'Delaware', 'De': 'Delaware',
+        'Fla': 'Florida', 'Fl': 'Florida',
+        'Ga': 'Georgia', 'Ga.': 'Georgia',
+        'Haw': 'Hawaii', 'Hi': 'Hawaii',
+        'Ida': 'Idaho', 'Id': 'Idaho',
+        'Ill': 'Illinois', 'Il': 'Illinois',
+        'Ind': 'Indiana', 'In': 'Indiana',
+        'Ia': 'Iowa',
+        'Kan': 'Kansas', 'Ks': 'Kansas',
+        'Ky': 'Kentucky',
+        'La': 'Louisiana',
+        'Me': 'Maine',
+        'Md': 'Maryland', 'Md.': 'Maryland',
+        'Mass': 'Massachusetts', 'Ma': 'Massachusetts',
+        'Mich': 'Michigan', 'Mi': 'Michigan',
+        'Minn': 'Minnesota', 'Mn': 'Minnesota',
+        'Miss': 'Mississippi', 'Ms': 'Mississippi', 'Sa': 'South Carolina',
+        'Mo': 'Missouri',
+        'Mont': 'Montana', 'Mt': 'Montana',
+        'N.C.': 'North Carolina', 'Nc': 'North Carolina',
+        'N.Y.': 'New York', 'Ny': 'New York',
+        'Oh': 'Ohio',
+        'Okla': 'Oklahoma', 'Ok': 'Oklahoma',
+        'Or': 'Oregon',
+        'Pa': 'Pennsylvania',
+        'R.I.': 'Rhode Island', 'Ri': 'Rhode Island',
+        'S.C.': 'South Carolina', 'Sc': 'South Carolina', 'Sg': 'Singapore',
+        'Sd': 'South Dakota',
+        'Tenn': 'Tennessee', 'Tn': 'Tennessee',
+        'Tex': 'Texas', 'Tx': 'Texas',
+        'Ut': 'Utah',
+        'Vt': 'Vermont',
+        'Va': 'Virginia', 'Vi': 'Virgin Islands',
+        'Wash': 'Washington', 'Wa': 'Washington',
+        'W.Va': 'West Virginia', 'Wv': 'West Virginia',
+        'Wis': 'Wisconsin', 'Wi': 'Wisconsin',
+        'Wy': 'Wyoming',
+
+        # Additional territories and special cases
+        'Guam': 'Guam', 'Gu': 'Guam',
+        'Pr': 'Puerto Rico', 'Puerto Rico': 'Puerto Rico',
+        'District Of Columbia': 'District of Columbia',
+
+        # International locations
+        'Hong Kong': 'Hong Kong',
+        'Central Visayas Bohol': 'Central Visayas Bohol',
+        'Fujian': 'Fujian',
+        'Jiangsu': 'Jiangsu',
+        'Kowloon': 'Kowloon',
+        'Liaoning': 'Liaoning',
+        'Metro Manila': 'Metro Manila',
+        'Seoul': 'Seoul',
+
+        # Special regions and provinces
+        'Nsw': 'New South Wales',
+        'Qld': 'Queensland',
+        'Ontario': 'Ontario',
+        'Quebec': 'Quebec',
     }
+    
+    def map_state(state):
+        """
+        Map state names with robust handling of various input formats
+        """
+        # Handle None or NaN values
+        if pd.isna(state):
+            return 'Unknown'
+        
+        # Convert to string, strip whitespace, and handle different cases
+        state_str = str(state).strip()
+        
+        # Try exact match first (case-sensitive)
+        if state_str in state_mapping:
+            return state_mapping[state_str]
+        
+        # Try title case
+        title_state = state_str.title()
+        if title_state in state_mapping:
+            return state_mapping[title_state]
+        
+        # Try uppercase
+        upper_state = state_str.upper()
+        if upper_state in state_mapping:
+            return state_mapping[upper_state]
+        
+        # If no match found, return title-cased original
+        return title_state
+    
+    # Columns to clean
+    columns_to_clean = [col for col in df.columns if 'state' in col.lower()]
     if 'State' in df.columns:
-        df['State'] = df['State'].replace(state_mapping)
+        columns_to_clean.append('State')
+    
+    # Apply cleaning to specified columns
+    for col in columns_to_clean:
+        # Use vectorized mapping for speed
+        df[col] = df[col].apply(map_state)
+    
     return df
 
-# Function to load Excel data
 def load_excel_data(file, sheet_name=None):
+    """
+    Load Excel file with state name cleaning
+    """
     try:
+        # Load the file
         if sheet_name:
             df = pd.read_excel(file, sheet_name=sheet_name)
         else:
             df = pd.read_excel(file)
         
+        # Clean state names
+        df = clean_state_names(df)
+        
         # Add date fields for filtering - use current date for all records
-        # This is needed for the time period filtering to work with the actual data
         if 'Date' not in df.columns:
             df['Date'] = datetime.datetime.now()
             
@@ -1395,5 +1473,3 @@ else:
                     st.warning("Unable to create pivot table. Please ensure both geographic and sales data are loaded.")
             else:
                 st.info("Please upload geographic reference data to use pivot tables.")
-
-
